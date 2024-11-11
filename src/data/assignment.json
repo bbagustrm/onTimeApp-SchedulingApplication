@@ -1,0 +1,19 @@
+[
+    {
+      "id": 1,
+      "tugas": "Belajar React",
+      "description": "Pelajari dasar-dasar React termasuk komponen, state, dan props.",
+      "tags": ["React", "JavaScript", "Frontend"],
+      "priority": "hard",
+      "deadline": "2024-11-15"
+    },
+    {
+      "id": 2,
+      "tugas": "Memasak PR Matematika",
+      "description": "Selesaikan latihan soal di halaman 42.",
+      "tags": ["Math", "Homework"],
+      "priority": "easy",
+      "deadline": "2024-11-20"
+    }
+  ]
+  
