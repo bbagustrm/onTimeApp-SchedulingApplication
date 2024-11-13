@@ -9,26 +9,40 @@
     @apply text-6xl font-extralight tracking-tight ;
 }
 .text-headline2{
-    @apply text-3xl font-normal ;
+    @apply text-2xl font-normal ;
 }
 .text-subtitle1{
     @apply text-base font-normal ;
 }
 .text-subtitle2{
-    @apply text-base font-medium ;
+    @apply text-xl font-medium ;
 }
 .text-body1{
-    @apply text-base font-normal ;
+    @apply text-sm font-normal ;
 }
 .text-body2{
     @apply text-sm font-normal ;
 }
 .text-button{
-    @apply text-sm font-medium uppercase tracking-wider	 ;
+    @apply text-sm font-bold uppercase tracking-wider;
 }
 .text-caption{
     @apply text-xs font-normal ;
 }
 .text-overline{
-    @apply text-[10px] font-light uppercase tracking-wider	 ;
+    @apply text-[10px] font-light uppercase tracking-wider;
+}
+
+
+.form-input {
+    @apply w-full p-3 border rounded-md bg-transparent border-surface2 bg-surface text-onSurface  focus:ring-2 focus:ring-primary focus:outline-none;
+}
+
+
+.container-box{
+    @apply container flex flex-col gap-12
+}
+
+input[type="time"]::-webkit-calendar-picker-indicator, input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(1);
 }
