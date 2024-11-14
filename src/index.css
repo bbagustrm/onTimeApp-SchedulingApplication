@@ -30,7 +30,7 @@
     @apply text-xs font-normal ;
 }
 .text-overline{
-    @apply text-[10px] font-light uppercase tracking-wider;
+    @apply text-[10px] font-light uppercase tracking-wider leading-3 ;
 }
 
 
@@ -40,7 +40,7 @@
 
 
 .container-box{
-    @apply container flex flex-col gap-12
+    @apply container flex flex-col gap-2
 }
 
 input[type="time"]::-webkit-calendar-picker-indicator, input[type="date"]::-webkit-calendar-picker-indicator {

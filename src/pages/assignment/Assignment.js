@@ -7,7 +7,6 @@ function Assignment() {
     return (
     <div className="container-box">
         <Navigation />
-
         <CardAssignment />
         <PlusButton link="/create-assignment" />
     </div>

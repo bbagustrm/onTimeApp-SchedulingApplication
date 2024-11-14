@@ -16,7 +16,7 @@ module.exports = {
         surface: "#1F1F1F",
         surface2: "#2E2E2EFF",
         onBackground: "#FFFFFF",
-        onSurface: "#DDDDDD",
+        onSurface: "#B1B1B1FF",
         error: "#CF6679",
         warning: "#CFAF66", 
         success: "#89CF66",

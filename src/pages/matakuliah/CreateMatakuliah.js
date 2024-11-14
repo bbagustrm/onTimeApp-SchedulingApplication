@@ -11,7 +11,8 @@ function CreateMatakuliah() {
     const [newMatakuliah, setNewMatakuliah] = useState({
         nama_matkul: "",
         hari: "Senin",
-        jam: "",
+        start_jam: "",
+        end_jam: "",
     });
 
     const handleChange = (e) => {
@@ -54,7 +55,7 @@ function CreateMatakuliah() {
                 <input
                     type="text"
                     name="nama_matkul"
-                    placeholder="Nama Tugas"
+                    placeholder="Nama Matakuliah"
                     onChange={handleChange}
                     className="form-input"
                 />
@@ -73,9 +74,14 @@ function CreateMatakuliah() {
                 </select>
                 <input
                     type="time"
-                    min="07:00" 
-                    max="21:00" 
-                    name="jam"
+                    name="start_jam"
+                    onChange={handleChange}
+                    className="form-input"
+                    required
+                />
+                <input
+                    type="time"
+                    name="end_jam"
                     onChange={handleChange}
                     className="form-input"
                     required
