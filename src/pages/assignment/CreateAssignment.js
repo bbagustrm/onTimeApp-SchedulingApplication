@@ -47,7 +47,7 @@ function CreateAssignment() {
     };
 
     return (
-        <div className="container-box text-body1">
+        <div className="container-box2 text-body1">
             <div className="flex gap-2 items-center">
                 <NavLink to="/assignment">
                     <BackIcon className="text-onBackground fill-current" />

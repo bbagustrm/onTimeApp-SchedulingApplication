@@ -131,16 +131,16 @@ function CardAssignment() {
                     {...longPressEvent} // Menggunakan variabel longPressEvent yang sudah di-bind
                 >
                     <div className="flex items-center justify-between gap-6">
-                        <div className="flex gap-6 items-center">
+                        <div className="flex gap-6 items-center w-full">
                             {isDeleteMode && (
                                 <input
                                     type="checkbox"
                                     checked={selectedAssignments.includes(assignment.id)}
                                     onChange={() => handleSelect(assignment.id)}
-                                    className="form-checkbox appearance-none w-4 h-4 rounded-sm ml-2 border-2 border-gray-400 checked:bg-primary checked:border-surface checked:ring-2 checked:ring-onBackground transition-all duration-300 cursor-pointer"
+                                    className="form-checkbox appearance-none w-5 h-[17px] rounded-sm ml-2 border-2 border-gray-400 checked:bg-primary checked:border-surface checked:ring-2 checked:ring-onBackground transition-all duration-300 cursor-pointer"
                                 />
                             )}
-                            <div onClick={() => navigate(`/update-assignment/${assignment.id}`)} className="space-y-2">
+                            <div onClick={() => navigate(`/update-assignment/${assignment.id}`)} className="w-full space-y-2">
                                 <h1 className="text-onBackground text-subtitle2">{assignment.nama_tugas}</h1>
                                 <div className={`w-12 h-1.5 rounded-full ${getPriorityColor(assignment.priority)}`}></div>
                                 <p className="text-onSurface text-body1 line-clamp-1">{assignment.description}</p>
@@ -155,7 +155,7 @@ function CardAssignment() {
                             type="checkbox"
                             checked={assignment.status}
                             onChange={() => handleStatusToggle(assignment)}
-                            className="form-checkbox appearance-none w-5 h-5 rounded-full border-2 border-gray-400 checked:bg-primary checked:border-surface checked:ring-2 checked:ring-onBackground transition-all duration-300 cursor-pointer"
+                            className="form-checkbox appearance-none w-5 h-[18px] rounded-full border-2 border-gray-400 checked:bg-primary checked:border-surface checked:ring-2 checked:ring-onBackground transition-all duration-300 cursor-pointer"
                         />
                     </div>
                 </div>

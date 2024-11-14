@@ -43,6 +43,11 @@
     @apply container flex flex-col gap-2
 }
 
+.container-box2{
+    @apply container flex flex-col gap-6 py-6
+}
+
+
 input[type="time"]::-webkit-calendar-picker-indicator, input[type="date"]::-webkit-calendar-picker-indicator {
     filter: invert(1);
 }

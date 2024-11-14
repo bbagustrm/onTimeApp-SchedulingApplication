@@ -88,12 +88,12 @@ function CardMatakuliah() {
                     key={matkul.id}
                     className={`bg-surface w-full p-4 rounded-md space-y-2 cursor-pointer`}
                 >
-                    <div className="flex gap-6 items-center">
+                    <div className="flex gap-6 items-center w-full">
                         <input
                             type="checkbox"
                             checked={selectedMatakuliah.includes(matkul.id)}
                             onChange={() => handleSelect(matkul.id)}
-                            className="form-checkbox appearance-none w-4 h-4 rounded-sm ml-2 border-2 border-gray-400 checked:bg-primary checked:border-surface checked:ring-2 checked:ring-onBackground transition-all duration-300 cursor-pointer"
+                            className="form-checkbox appearance-none w-5 h-[17px] rounded-sm ml-2 border-2 border-gray-400 checked:bg-primary checked:border-surface checked:ring-2 checked:ring-onBackground transition-all duration-300 cursor-pointer"
                         />
                         <div onClick={() => navigate(`/update-matakuliah/${matkul.id}`)} className="w-full space-y-2">
                             <h1 className="text-onBackground text-subtitle2">{matkul.nama_matkul}</h1>
