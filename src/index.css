@@ -15,7 +15,7 @@
     @apply text-base font-normal ;
 }
 .text-subtitle2{
-    @apply text-xl font-medium ;
+    @apply text-base font-semibold ;
 }
 .text-body1{
     @apply text-sm font-normal ;

@@ -77,7 +77,7 @@ function CardMatakuliah() {
                 <div className="flex justify-end mb-2">
                     <button
                         onClick={handleDelete}
-                        className="fixed top-4 right-4 bg-error text-white p-4 rounded-full hover:bg-red-600 transition"
+                        className="absolute z-20 top-4 right-4 hover:opacity-90 border-2 border-error text-white p-2 rounded-full transition"
                     >
                         <TrashIcon />
                     </button>
@@ -86,9 +86,15 @@ function CardMatakuliah() {
             {matakuliah.map((matkul) => (
                 <div
                     key={matkul.id}
-                    className={`bg-surface w-full p-4 rounded-md space-y-2 cursor-pointer transition-opacity ${selectedMatakuliah.includes(matkul.id) ? "opacity-50" : "opacity-100"}`}
+                    className={`bg-surface w-full p-4 rounded-md space-y-2 cursor-pointer`}
                 >
-                    <div className="flex items-center justify-between">
+                    <div className="flex gap-6 items-center">
+                        <input
+                            type="checkbox"
+                            checked={selectedMatakuliah.includes(matkul.id)}
+                            onChange={() => handleSelect(matkul.id)}
+                            className="form-checkbox appearance-none w-4 h-4 rounded-sm ml-2 border-2 border-gray-400 checked:bg-primary checked:border-surface checked:ring-2 checked:ring-onBackground transition-all duration-300 cursor-pointer"
+                        />
                         <div onClick={() => navigate(`/update-matakuliah/${matkul.id}`)} className="w-full space-y-2">
                             <h1 className="text-onBackground text-subtitle2">{matkul.nama_matkul}</h1>
                             <div className="flex gap-2 items-center">
@@ -96,12 +102,7 @@ function CardMatakuliah() {
                                 <p className="text-onSurface text-body1"> {matkul.hari} | {matkul.start_jam} - {matkul.end_jam}</p>
                             </div>
                         </div>
-                        <input
-                            type="checkbox"
-                            checked={selectedMatakuliah.includes(matkul.id)}
-                            onChange={() => handleSelect(matkul.id)}
-                            className="form-checkbox appearance-none w-5 h-5 rounded-full border-2 border-gray-400 checked:bg-primary checked:border-surface checked:ring-2 checked:ring-onBackground transition-all duration-300 cursor-pointer"
-                        />
+
                     </div>
                 </div>
             ))}
