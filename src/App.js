@@ -1,6 +1,7 @@
 import React from 'react';
-import Home from './pages/Home';
-import CreateTime from './pages/CreateTime';
+import Home from './pages/time/Home';
+import CreateTime from './pages/time/CreateTime';
+import UpdateTime from './pages/time/UpdateTime';
 
 import Assignment from './pages/assignment/Assignment';
 import CreateAssignment from './pages/assignment/CreateAssignment';
@@ -20,6 +21,8 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/create-time" element={<CreateTime />} />
+            <Route path="/update-time/:id" element={<UpdateTime />} />
+
 
             <Route path="/assignment" element={<Assignment />} />
             <Route path="/create-assignment" element={<CreateAssignment />} />

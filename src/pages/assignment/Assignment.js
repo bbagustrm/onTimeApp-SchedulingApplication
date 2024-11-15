@@ -4,11 +4,11 @@ import Navigation from '../../components/Navigation';
 import PlusButton from '../../components/PlusButton';
 
 function Assignment() {
-    return (
+  return (
     <div className="container-box">
-        <Navigation />
-        <CardAssignment />
-        <PlusButton link="/create-assignment" />
+      <Navigation />
+      <CardAssignment />
+      <PlusButton link="/create-assignment" />
     </div>
   );
 }
