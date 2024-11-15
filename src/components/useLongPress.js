@@ -1,26 +1,35 @@
-import { useCallback, useRef } from "react";
+import { useState, useEffect, useCallback } from "react";
 
-function useLongPress(callback, ms = 500) {
-    const timerRef = useRef(null);
+const useLongPress = (callback, ms = 500) => {
+    const [startLongPress, setStartLongPress] = useState(false);
 
     const start = useCallback(() => {
-        timerRef.current = setTimeout(callback, ms);
-    }, [callback, ms]);
-
-    const clear = useCallback(() => {
-        if (timerRef.current) {
-            clearTimeout(timerRef.current);
-            timerRef.current = null;
-        }
+        setStartLongPress(true);
     }, []);
+
+    const stop = useCallback(() => {
+        setStartLongPress(false);
+    }, []);
+
+    useEffect(() => {
+        let timerId;
+        if (startLongPress) {
+            timerId = setTimeout(callback, ms);
+        } else {
+            clearTimeout(timerId);
+        }
+        return () => {
+            clearTimeout(timerId);
+        };
+    }, [startLongPress, callback, ms]);
 
     return {
         onMouseDown: start,
+        onMouseUp: stop,
+        onMouseLeave: stop,
         onTouchStart: start,
-        onMouseUp: clear,
-        onMouseLeave: clear,
-        onTouchEnd: clear,
+        onTouchEnd: stop,
     };
-}
+};
 
 export default useLongPress;
