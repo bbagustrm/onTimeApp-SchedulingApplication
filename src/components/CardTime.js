@@ -177,6 +177,55 @@ function CardTime() {
         return startA < endB && startB < endA;
     }
 
+    function isDayPassed(dateString) {
+        const currentDate = new Date();
+        const itemDate = new Date(dateString); // Asumsikan `dateString` dalam format YYYY-MM-DD
+    
+        // Periksa apakah itemDate sudah berlalu
+        return currentDate > itemDate;
+    }
+
+    useEffect(() => {
+        const deleteExpiredTimes = async () => {
+            try {
+                const response = await fetch("https://restapi-3bfde-default-rtdb.firebaseio.com/time.json?auth=kCScjmp3OSNBh2EstclolWV3jduOQ7EocsdbWqvL");
+                if (!response.ok) throw new Error("Gagal mengambil data time");
+    
+                const data = await response.json();
+                const currentDate = new Date();
+    
+                // Loop melalui data dan cari item yang telah lewat
+                const expiredIds = Object.keys(data).filter((id) => {
+                    const item = data[id];
+                    return isDayPassed(item.date); // Pastikan `item.date` berisi tanggal
+                });
+    
+                // Hapus data yang kedaluwarsa
+                await Promise.all(
+                    expiredIds.map(async (id) => {
+                        await fetch(`https://restapi-3bfde-default-rtdb.firebaseio.com/time/${id}.json?auth=kCScjmp3OSNBh2EstclolWV3jduOQ7EocsdbWqvL`, {
+                            method: "DELETE",
+                        });
+                    })
+                );
+    
+                console.log("Data yang kedaluwarsa berhasil dihapus:", expiredIds);
+            } catch (err) {
+                console.error("Error saat menghapus data kedaluwarsa:", err);
+            }
+        };
+    
+        // Set interval untuk mengecek setiap hari
+        const interval = setInterval(deleteExpiredTimes, 24 * 60 * 60 * 1000); // 24 jam
+    
+        // Jalankan sekali saat komponen dimuat
+        deleteExpiredTimes();
+    
+        return () => clearInterval(interval); // Hentikan interval saat komponen unmount
+    }, []);
+    
+    
+
     const sortedData = [...times, ...matkul].sort((a, b) => {
         const parseTime = (time) => {
             const [hours, minutes] = time.split(':').map(Number);
@@ -199,6 +248,7 @@ function CardTime() {
         return { ...item, isConflict }; // Tambahkan properti isConflict
     });
 
+    
 
     const handleStatusToggle = async (time) => {
         try {
