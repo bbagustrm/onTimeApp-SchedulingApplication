@@ -18,35 +18,48 @@ function getPriorityColor(priority) {
 }
 
 function ContentTime({ time, longPressProps, handleStatusToggle, handleSelect, isDeleteMode, selectedTimes }) {
+    const navigate = useNavigate();
     return (
-        <div key={time.id} className={`flex justify-between bg-surface w-full overflow-hidden rounded-lg cursor-pointer transition-opacity ${time.status ? "opacity-50" : "opacity-100"}`} {...longPressProps}>
-            <div className={`w-6 h-fill ${getPriorityColor(time.tugasData.priority)}`}></div>
-            <div className="flex items-center p-4 w-full justify-between gap-6">
-                <div className="flex gap-6 items-center w-10/12">
-                    {isDeleteMode && (
-                        <input
-                            type="checkbox"
-                            checked={selectedTimes.includes(time.id)}
-                            onChange={() => handleSelect(time.id)}
-                            className="form-checkbox appearance-none w-4 h-4 rounded-sm ml-2 border-2 border-gray-400 checked:bg-primary checked:border-surface checked:ring-2 checked:ring-onBackground transition-all duration-300 cursor-pointer"
-                        />
-                    )}
-                    <div className="w-8/12 space-y-2">
-                        <h1 className="text-onBackground text-subtitle2">{time.tugasData.nama_tugas}</h1>
-                        <p className="text-onSurface text-body1">{time.tugasData.description}</p>
-                        <div className="flex gap-2">
-                            {time.tugasData.tags && time.tugasData.tags.map((tag, index) => (
-                                <span key={`${tag}-${index}`} className="text-overline py-2 px-3 h-full rounded-full bg-surface2 text-primary">{tag}</span>
-                            ))}
+        <div className="space-y-4">
+            <div className="flex gap-2">
+                <ClockIcon />
+                <h1 className="text-subtitle2 text-onBackground">{time.start_jam} - {time.end_jam}</h1>
+            </div>
+            <div key={time.id} className={`flex justify-between bg-surface w-full overflow-hidden rounded-lg cursor-pointer transition-opacity ${time.status ? "opacity-50" : "opacity-100"}`} {...longPressProps}>
+                <div className={`w-6 h-fill ${getPriorityColor(time.tugasData.priority)}`}></div>
+                <div className="flex items-center p-4 w-full justify-between gap-6">
+                    <div className="flex gap-6 items-center w-10/12">
+                        {isDeleteMode && (
+                            <input
+                                type="checkbox"
+                                checked={selectedTimes.includes(time.id)}
+                                onChange={() => handleSelect(time.id)}
+                                className="form-checkbox appearance-none w-4 h-4 rounded-sm ml-2 border-2 border-gray-400 checked:bg-primary checked:border-surface checked:ring-2 checked:ring-onBackground transition-all duration-300 cursor-pointer"
+                            />
+                        )}
+                        <div onClick={() => navigate(`/update-time/${time.id}`)} className="w-8/12 space-y-2">
+                            {time.isConflict && (
+                                <p className="text-error text-body2">Waktu ini bentrok dengan jadwal lain!</p>
+                            )}
+                            <h1 className="text-onBackground text-subtitle2">{time.tugasData.nama_tugas}</h1>
+                            <p className="text-onSurface text-body1">{time.tugasData.description}</p>
+                            <div className="flex gap-2">
+                                {time.tugasData.tags && time.tugasData.tags.map((tag, index) => (
+                                    <span key={`${tag}-${index}`} className="text-overline py-2 px-3 h-full rounded-full bg-surface2 text-primary">{tag}</span>
+                                ))}
+                            </div>
                         </div>
                     </div>
+                    <input
+                        type="checkbox"
+                        checked={time.status}
+                        onChange={() => handleStatusToggle(time)}
+                        className="form-checkbox appearance-none w-5 h-5 rounded-full border-2 border-gray-400 checked:bg-primary checked:border-surface checked:ring-2 checked:ring-onBackground transition-all duration-300 cursor-pointer"
+                    />
                 </div>
-                <input
-                    type="checkbox"
-                    checked={time.status}
-                    onChange={() => handleStatusToggle(time)}
-                    className="form-checkbox appearance-none w-5 h-5 rounded-full border-2 border-gray-400 checked:bg-primary checked:border-surface checked:ring-2 checked:ring-onBackground transition-all duration-300 cursor-pointer"
-                />
+            </div>
+            <div className="py-2 md:py-4 w-full">
+                <div className="h-1 w-full bg-surface2 rounded-full"></div>
             </div>
         </div>
     );
@@ -54,13 +67,22 @@ function ContentTime({ time, longPressProps, handleStatusToggle, handleSelect, i
 
 function ContentMatkul({ time }) {
     return (
-        <div key={time.id} className="flex justify-between bg-surface w-full overflow-hidden rounded-lg cursor-pointer transition-opacity opacity-100">
-            <div className="flex items-center p-4 w-full justify-between gap-6">
-                <div className="flex gap-6 items-center w-10/12">
-                    <div className="w-8/12 space-y-2">
-                        <h1 className="text-onBackground text-subtitle2">{time.nama_matkul}</h1>
+        <div className="space-y-4">
+            <div className="flex gap-2">
+                <ClockIcon />
+                <h1 className="text-subtitle2 text-onBackground">{time.start_jam} - {time.end_jam}</h1>
+            </div>
+            <div key={time.id} className="flex justify-between border-[1px] border-primary bg-surface w-full overflow-hidden rounded-lg cursor-pointer transition-opacity opacity-100">
+                <div className="flex items-center p-4 w-full justify-between gap-6">
+                    <div className="flex gap-6 items-center w-10/12">
+                        <div className="w-8/12 space-y-2">
+                            <h1 className="text-onBackground text-subtitle2">{time.nama_matkul}</h1>
+                        </div>
                     </div>
                 </div>
+            </div>
+            <div className="py-4 w-full">
+                <div className="h-1 w-full bg-surface2 rounded-full"></div>
             </div>
         </div>
     );
@@ -118,11 +140,18 @@ function CardTime() {
                 if (!response.ok) throw new Error("Gagal mengambil data matakuliah");
                 const data = await response.json();
 
-                const matkulArray = Object.keys(data).map((key) => ({
-                    id: key,
-                    ...data[key],
-                    type: "matkul"
-                })).filter((time) => time.user_id === user_id);
+                // Dapatkan nama hari saat ini
+                const days = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
+                const today = days[new Date().getDay()];
+
+                // Proses data dan filter berdasarkan hari ini
+                const matkulArray = Object.keys(data)
+                    .map((key) => ({
+                        id: key,
+                        ...data[key],
+                        type: "matkul"
+                    }))
+                    .filter((time) => time.user_id === user_id && time.hari === today); // Filter by hari
 
                 setMatkul(matkulArray);
             } catch (err) {
@@ -133,7 +162,43 @@ function CardTime() {
         fetchMatkul();
     }, []);
 
-    const sortedData = [...times, ...matkul];
+    function isTimeOverlap(start1, end1, start2, end2) {
+        const parseTime = (time) => {
+            const [hours, minutes] = time.split(':').map(Number);
+            return hours * 60 + minutes; // Konversi waktu menjadi menit
+        };
+
+        const startA = parseTime(start1);
+        const endA = parseTime(end1);
+        const startB = parseTime(start2);
+        const endB = parseTime(end2);
+
+        // Return true jika ada overlap
+        return startA < endB && startB < endA;
+    }
+
+    const sortedData = [...times, ...matkul].sort((a, b) => {
+        const parseTime = (time) => {
+            const [hours, minutes] = time.split(':').map(Number);
+            return hours * 60 + minutes;
+        };
+
+        const startComparison = parseTime(a.start_jam) - parseTime(b.start_jam);
+        if (startComparison !== 0) {
+            return startComparison;
+        }
+        return parseTime(a.end_jam) - parseTime(b.end_jam);
+    }).map((item, _, allData) => {
+        // Periksa apakah ada bentrok dengan data lain
+        const isConflict = allData.some(
+            (other) =>
+                other.id !== item.id && // Jangan bandingkan dengan diri sendiri
+                isTimeOverlap(item.start_jam, item.end_jam, other.start_jam, other.end_jam)
+        );
+
+        return { ...item, isConflict }; // Tambahkan properti isConflict
+    });
+
 
     const handleStatusToggle = async (time) => {
         try {

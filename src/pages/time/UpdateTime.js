@@ -55,7 +55,7 @@ function UpdateTime() {
                 setTimeData({
                     tugas_id: data.tugas_id || "",
                     user_id: data.user_id || user_id,
-                    status: data.status || "normal",
+                    status: data.status || false,
                     start_jam: data.start_jam || "",
                     end_jam: data.end_jam || "",
                 });
