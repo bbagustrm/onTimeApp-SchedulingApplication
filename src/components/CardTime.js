@@ -17,8 +17,58 @@ function getPriorityColor(priority) {
     }
 }
 
+function ContentTime({ time, longPressProps, handleStatusToggle, handleSelect, isDeleteMode, selectedTimes }) {
+    return (
+        <div key={time.id} className={`flex justify-between bg-surface w-full overflow-hidden rounded-lg cursor-pointer transition-opacity ${time.status ? "opacity-50" : "opacity-100"}`} {...longPressProps}>
+            <div className={`w-6 h-fill ${getPriorityColor(time.tugasData.priority)}`}></div>
+            <div className="flex items-center p-4 w-full justify-between gap-6">
+                <div className="flex gap-6 items-center w-10/12">
+                    {isDeleteMode && (
+                        <input
+                            type="checkbox"
+                            checked={selectedTimes.includes(time.id)}
+                            onChange={() => handleSelect(time.id)}
+                            className="form-checkbox appearance-none w-4 h-4 rounded-sm ml-2 border-2 border-gray-400 checked:bg-primary checked:border-surface checked:ring-2 checked:ring-onBackground transition-all duration-300 cursor-pointer"
+                        />
+                    )}
+                    <div className="w-8/12 space-y-2">
+                        <h1 className="text-onBackground text-subtitle2">{time.tugasData.nama_tugas}</h1>
+                        <p className="text-onSurface text-body1">{time.tugasData.description}</p>
+                        <div className="flex gap-2">
+                            {time.tugasData.tags && time.tugasData.tags.map((tag, index) => (
+                                <span key={`${tag}-${index}`} className="text-overline py-2 px-3 h-full rounded-full bg-surface2 text-primary">{tag}</span>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+                <input
+                    type="checkbox"
+                    checked={time.status}
+                    onChange={() => handleStatusToggle(time)}
+                    className="form-checkbox appearance-none w-5 h-5 rounded-full border-2 border-gray-400 checked:bg-primary checked:border-surface checked:ring-2 checked:ring-onBackground transition-all duration-300 cursor-pointer"
+                />
+            </div>
+        </div>
+    );
+}
+
+function ContentMatkul({ time }) {
+    return (
+        <div key={time.id} className="flex justify-between bg-surface w-full overflow-hidden rounded-lg cursor-pointer transition-opacity opacity-100">
+            <div className="flex items-center p-4 w-full justify-between gap-6">
+                <div className="flex gap-6 items-center w-10/12">
+                    <div className="w-8/12 space-y-2">
+                        <h1 className="text-onBackground text-subtitle2">{time.nama_matkul}</h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}
+
 function CardTime() {
     const [times, setTimes] = useState([]);
+    const [matkul, setMatkul] = useState([]);
     const [selectedTimes, setSelectedTimes] = useState([]);
     const [isDeleteMode, setIsDeleteMode] = useState(false);
     const [loading, setLoading] = useState(true);
@@ -31,9 +81,7 @@ function CardTime() {
         const fetchTimes = async () => {
             try {
                 const response = await fetch("https://restapi-3bfde-default-rtdb.firebaseio.com/time.json" + token);
-                if (!response.ok) {
-                    throw new Error("Gagal mengambil data time");
-                }
+                if (!response.ok) throw new Error("Gagal mengambil data time");
                 const data = await response.json();
 
                 const timesArray = Object.keys(data).map((key) => ({
@@ -41,12 +89,9 @@ function CardTime() {
                     ...data[key]
                 })).filter((time) => time.user_id === user_id);
 
-                // Ambil data tugas terkait dengan tugas_id
                 const fetchTugasData = async (tugas_id) => {
                     const tugasResponse = await fetch(`https://restapi-3bfde-default-rtdb.firebaseio.com/tugas/${tugas_id}.json${token}`);
-                    if (!tugasResponse.ok) {
-                        throw new Error("Gagal mengambil data tugas");
-                    }
+                    if (!tugasResponse.ok) throw new Error("Gagal mengambil data tugas");
                     return await tugasResponse.json();
                 };
 
@@ -54,6 +99,7 @@ function CardTime() {
                     const tugasData = await fetchTugasData(time.tugas_id);
                     return { ...time, tugasData }; // Menambahkan data tugas ke time
                 }));
+
                 setTimes(updatedTimes);
                 setLoading(false);
             } catch (err) {
@@ -65,7 +111,30 @@ function CardTime() {
         fetchTimes();
     }, []);
 
-    console.log(times);
+    useEffect(() => {
+        const fetchMatkul = async () => {
+            try {
+                const response = await fetch("https://restapi-3bfde-default-rtdb.firebaseio.com/matakuliah.json" + token);
+                if (!response.ok) throw new Error("Gagal mengambil data matakuliah");
+                const data = await response.json();
+
+                const matkulArray = Object.keys(data).map((key) => ({
+                    id: key,
+                    ...data[key],
+                    type: "matkul"
+                })).filter((time) => time.user_id === user_id);
+
+                setMatkul(matkulArray);
+            } catch (err) {
+                setError(err.message);
+            }
+        };
+
+        fetchMatkul();
+    }, []);
+
+    const sortedData = [...times, ...matkul];
+
     const handleStatusToggle = async (time) => {
         try {
             const updatedTime = { ...time, status: !time.status };
@@ -81,6 +150,13 @@ function CardTime() {
         }
     };
 
+    const handleSelect = (id) => {
+        setSelectedTimes((prevSelected) =>
+            prevSelected.includes(id)
+                ? prevSelected.filter((timeId) => timeId !== id)
+                : [...prevSelected, id]
+        );
+    };
 
     const handleDelete = async () => {
         try {
@@ -99,20 +175,12 @@ function CardTime() {
         }
     };
 
-    const handleSelect = (id) => {
-        setSelectedTimes((prevSelected) =>
-            prevSelected.includes(id)
-                ? prevSelected.filter((timeId) => timeId !== id)
-                : [...prevSelected, id]
-        );
-    };
-
     const longPress = (timeId) => {
         setIsDeleteMode(true);
         setSelectedTimes([timeId]);
     };
 
-    const longPressProps = useLongPress(() => longPress(), 500);
+    const longPressProps = useLongPress((timeId) => longPress(timeId), 500);
 
     useEffect(() => {
         if (selectedTimes.length === 0) {
@@ -120,13 +188,8 @@ function CardTime() {
         }
     }, [selectedTimes]);
 
-    if (loading) {
-        return <p className="text-center">Loading...</p>;
-    }
-
-    if (error) {
-        return <p className="text-center text-red-500">Error: {error}</p>;
-    }
+    if (loading) return <p className="text-center">Loading...</p>;
+    if (error) return <p className="text-center text-red-500">Error: {error}</p>;
 
     return (
         <div className="space-y-4">
@@ -140,58 +203,23 @@ function CardTime() {
                     </button>
                 </div>
             )}
-            {times.map((time) => (
-                <div className="space-y-3 pb-2">
-                    <div className="flex gap-2">
-                        <ClockIcon />
-                        <h1 className="text-subtitle1 text-onSurface">{time.start_jam} - {time.end_jam}</h1>
-                    </div>
-                    <div
+            {sortedData.map((time) =>
+                time.type === "matkul" ? (
+                    <ContentMatkul key={time.id} time={time} />
+                ) : (
+                    <ContentTime
                         key={time.id}
-                        className={`flex justify-between bg-surface w-full overflow-hidden rounded-lg cursor-pointer transition-opacity ${time.status ? "opacity-50" : "opacity-100"}`}
-                        {...longPressProps}
-                    >
-                        <div className={`w-6 h-fill ${getPriorityColor(time.tugasData.priority)}`}></div>
-                        <div className="flex items-center p-4 w-full justify-between gap-6">
-                            <div className="flex gap-6 items-center w-10/12">
-                                {isDeleteMode && (
-                                    <input
-                                        type="checkbox"
-                                        checked={selectedTimes.includes(time.id)}
-                                        onChange={() => handleSelect(time.id)}
-                                        className="form-checkbox appearance-none w-4 h-4 rounded-sm ml-2 border-2 border-gray-400 checked:bg-primary checked:border-surface checked:ring-2 checked:ring-onBackground transition-all duration-300 cursor-pointer"
-                                    />
-                                )}
-                                <div onClick={() => navigate(`/update-time/${time.id}`)} className="w-8/12 space-y-2">
-                                    <h1 className="text-onBackground text-subtitle2">{time.tugasData.nama_tugas}</h1>
-                                    <p className="text-onSurface text-body1">{time.tugasData.description}</p>
-                                    <div className="flex gap-2">
-                                        {time.tugasData.tags && time.tugasData.tags.map((tag, index) => (
-                                            <span key={`${tag}-${index}`} className="text-overline py-2 px-3 h-full rounded-full bg-surface2 text-primary">{tag}</span>
-                                        ))}
-                                    </div>
-                                </div>
-                            </div>
-                            <input
-                                type="checkbox"
-                                checked={time.status}
-                                onChange={() => handleStatusToggle(time)}
-                                className="form-checkbox appearance-none w-5 h-5 rounded-full border-2 border-gray-400 checked:bg-primary checked:border-surface checked:ring-2 checked:ring-onBackground transition-all duration-300 cursor-pointer"
-                            />
-                        </div>
-                    </div>
-                    <div className="w-full py-2">
-                        <div className="w-full h-[3px] rounded-full bg-surface2 my-2"></div>
-
-                    </div>
-                </div>
-            ))}
-
+                        time={time}
+                        longPressProps={longPressProps}
+                        handleStatusToggle={handleStatusToggle}
+                        handleSelect={handleSelect}
+                        isDeleteMode={isDeleteMode}
+                        selectedTimes={selectedTimes}
+                    />
+                )
+            )}
         </div>
     );
 }
 
 export default CardTime;
-
-
-
