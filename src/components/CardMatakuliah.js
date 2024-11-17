@@ -147,7 +147,7 @@ function CardMatakuliah() {
                 <div className="flex justify-end mb-2">
                     <button
                         onClick={handleDelete}
-                        className="absolute z-20 top-4 right-4 hover:opacity-90 border-2 border-error text-white p-2 rounded-full transition"
+                        className="fixed z-20 top-4 right-4 hover:opacity-90 border-2 border-error text-white p-2 rounded-full transition"
                     >
                         <TrashIcon />
                     </button>

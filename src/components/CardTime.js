@@ -303,6 +303,51 @@ function CardTime() {
         }
     }, [selectedTimes]);
 
+    function isTimePassed(endJam) {
+        const currentTime = new Date();
+        const [hours, minutes] = endJam.split(":").map(Number); // Mengonversi jam menjadi angka
+        const endTime = new Date();
+    
+        endTime.setHours(hours, minutes, 0, 0); // Set jam dan menit pada objek waktu
+    
+        return currentTime > endTime; // Periksa apakah waktu sekarang sudah lewat dari endTime
+    }
+
+    useEffect(() => {
+        const updateStatuses = async () => {
+            try {
+                // Lakukan pengecekan untuk setiap item
+                const updatedTimes = await Promise.all(
+                    times.map(async (time) => {
+                        if (!time.status && isTimePassed(time.end_jam)) {
+                            // Perbarui status di server
+                            await fetch(`https://restapi-3bfde-default-rtdb.firebaseio.com/time/${time.id}.json${token}`, {
+                                method: "PATCH",
+                                body: JSON.stringify({ status: true }),
+                            });
+    
+                            // Kembalikan objek dengan status yang diubah
+                            return { ...time, status: true };
+                        }
+                        return time; // Jika tidak lewat, kembalikan objek asli
+                    })
+                );
+    
+                setTimes(updatedTimes); // Perbarui state
+            } catch (err) {
+                console.error("Gagal memperbarui status otomatis:", err);
+            }
+        };
+    
+
+        const interval = setInterval(updateStatuses, 60 * 10000);
+        updateStatuses();
+    
+        return () => clearInterval(interval); // Hentikan interval saat komponen unmount
+    }, [times, token]);
+    
+    
+
     if (loading) return <p className="text-center">Loading...</p>;
     if (error) return <p className="text-center text-red-500">Error: {error}</p>;
 
@@ -312,7 +357,7 @@ function CardTime() {
                 <div className="flex justify-end mb-2">
                     <button
                         onClick={handleDelete}
-                        className="absolute z-20 top-4 right-4 hover:opacity-90 border-2 border-error text-white p-2 rounded-full transition"
+                        className="fixed z-20 top-4 right-4 hover:opacity-90 border-2 border-error text-white p-2 rounded-full transition"
                     >
                         <TrashIcon />
                     </button>
