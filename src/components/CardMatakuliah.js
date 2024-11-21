@@ -54,7 +54,8 @@ function CardMatakuliah() {
     const [error, setError] = useState(null);
     const navigate = useNavigate();
     const token = "?auth=kCScjmp3OSNBh2EstclolWV3jduOQ7EocsdbWqvL";
-    const user_id = "-OBZ3bUE2zRmeX90l-ws";
+    const user_id = localStorage.getItem('userKey');
+
 
     useEffect(() => {
         const fetchMatakuliah = async () => {

@@ -9,7 +9,7 @@ module.exports = {
         sans: ["Roboto", "sans-serif"],
       },
       colors: {
-        primary: "#BB86FC",
+        primary: "#825daf",
         primaryVariant: "#3700B3",
         secondary: "#03DAC6",
         background: "#121212",
