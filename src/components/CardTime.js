@@ -17,6 +17,23 @@ function getPriorityColor(priority) {
     }
 }
 
+function getDeadlineText(deadline) {
+    const now = new Date();
+    const deadlineDate = new Date(deadline);
+
+    // Atur waktu agar hanya membandingkan tanggal, bukan jam
+    const nowStartOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const deadlineStartOfDay = new Date(deadlineDate.getFullYear(), deadlineDate.getMonth(), deadlineDate.getDate());
+
+    if (deadlineDate < now) {
+        return "Deadline terlewat";
+    } else if (deadlineStartOfDay.getTime() === nowStartOfDay.getTime()) {
+        return "Deadline Hari ini";
+    } else {
+        return deadlineDate.toLocaleDateString(); // Format default tanggal
+    }
+}
+
 function ContentTime({ time, longPressProps, handleStatusToggle, handleSelect, isDeleteMode, selectedTimes }) {
     const navigate = useNavigate();
     return (
@@ -42,11 +59,15 @@ function ContentTime({ time, longPressProps, handleStatusToggle, handleSelect, i
                                 <p className="text-error text-body2">Waktu ini bentrok dengan jadwal lain!</p>
                             )}
                             <h1 className="text-onBackground text-subtitle2">{time.tugasData.nama_tugas}</h1>
-                            <p className="text-onSurface text-body1">{time.tugasData.description}</p>
+                            <p className="text-onSurface text-body1 line-clamp-1">{time.tugasData.description}</p>
                             <div className="flex gap-2">
                                 {time.tugasData.tags && time.tugasData.tags.map((tag, index) => (
                                     <span key={`${tag}-${index}`} className="text-overline py-2 px-3 h-full rounded-full bg-surface2 text-primary">{tag}</span>
                                 ))}
+                            </div>
+                            <div className={`text-body2 flex items-center gap-2 ${getDeadlineText(time.tugasData.deadline) === "Deadline terlewat" ? "text-error" : getDeadlineText(time.tugasData.deadline) === "Deadline Hari ini" ? "text-warning" : "text-onSurface"}`} >
+                                <div className={`w-2 h-2 rounded-full ${getDeadlineText(time.tugasData.deadline) === "Deadline terlewat" ? "bg-error" : getDeadlineText(time.tugasData.deadline) === "Deadline Hari ini" ? "bg-warning" : "bg-onSurface"}`}> </div>
+                                {getDeadlineText(time.tugasData.deadline)}
                             </div>
                         </div>
                     </div>
@@ -177,7 +198,7 @@ function CardTime() {
         // Return true jika ada overlap
         return startA < endB && startB < endA;
     }
-    
+
 
     const sortedData = [...times, ...matkul].sort((a, b) => {
         const parseTime = (time) => {
@@ -201,7 +222,7 @@ function CardTime() {
         return { ...item, isConflict }; // Tambahkan properti isConflict
     });
 
-    
+
 
     const handleStatusToggle = async (time) => {
         try {

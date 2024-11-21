@@ -66,22 +66,85 @@ function CardAssignment() {
         }
     };
 
+    const getDeadlineClass = (deadline) => {
+        const now = new Date();
+        const deadlineDate = new Date(deadline);
+        const timeDifference = deadlineDate - now; // Selisih waktu dalam milidetik
+
+        if (timeDifference < 0) {
+            return "text-error"; // Sudah melewati deadline
+        } else if (timeDifference <= 24 * 60 * 60 * 1000) {
+            return "text-warning"; // Kurang dari 24 jam
+        } else {
+            return "text-onSurface"; // Normal
+        }
+    };
+    const getDeadlineClass2 = (deadline) => {
+        const now = new Date();
+        const deadlineDate = new Date(deadline);
+        const timeDifference = deadlineDate - now; // Selisih waktu dalam milidetik
+
+        if (timeDifference < 0) {
+            return "bg-error"; // Sudah melewati deadline
+        } else if (timeDifference <= 24 * 60 * 60 * 1000) {
+            return "bg-warning"; // Kurang dari 24 jam
+        } else {
+            return "bg-onSurface"; // Normal
+        }
+    };
+
+    const getDeadlineText = (deadline) => {
+        const now = new Date();
+        const deadlineDate = new Date(deadline);
+
+        // Atur waktu agar hanya membandingkan tanggal, bukan jam
+        const nowStartOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        const deadlineStartOfDay = new Date(deadlineDate.getFullYear(), deadlineDate.getMonth(), deadlineDate.getDate());
+
+        if (deadlineDate < now) {
+            return "Deadline terlewat";
+        } else if (deadlineStartOfDay.getTime() === nowStartOfDay.getTime()) {
+            return "Deadline Hari ini";
+        } else {
+            return deadlineDate.toLocaleDateString(); // Format default tanggal
+        }
+    };
+
     const handleDelete = async () => {
         try {
-            await Promise.all(
-                selectedAssignments.map(async (id) => {
-                    await fetch(`https://restapi-3bfde-default-rtdb.firebaseio.com/tugas/${id}.json${token}`, {
-                        method: "DELETE"
-                    });
-                })
+            // Ambil semua data time dari database
+            const timeResponse = await fetch("https://restapi-3bfde-default-rtdb.firebaseio.com/time.json" + token);
+            if (!timeResponse.ok) throw new Error("Gagal mengambil data time");
+            const timeData = await timeResponse.json();
+
+            // Cari time yang terkait dengan tugas yang akan dihapus
+            const relatedTimes = Object.keys(timeData).filter((key) =>
+                selectedAssignments.includes(timeData[key].tugas_id)
             );
-            setAssignments(assignments.filter((assignment) => !selectedAssignments.includes(assignment.id)));
+
+            // Hapus tugas dan time terkait
+            await Promise.all([
+                ...selectedAssignments.map((id) =>
+                    fetch(`https://restapi-3bfde-default-rtdb.firebaseio.com/tugas/${id}.json${token}`, {
+                        method: "DELETE"
+                    })
+                ),
+                ...relatedTimes.map((id) =>
+                    fetch(`https://restapi-3bfde-default-rtdb.firebaseio.com/time/${id}.json${token}`, {
+                        method: "DELETE"
+                    })
+                )
+            ]);
+
+            // Perbarui state assignment dan time
+            setAssignments((prev) => prev.filter((assignment) => !selectedAssignments.includes(assignment.id)));
             setSelectedAssignments([]);
             setIsDeleteMode(false);
         } catch (err) {
-            setError("Gagal menghapus assignments yang dipilih");
+            setError("Gagal menghapus assignments dan time yang terkait");
         }
     };
+
 
     const handleSelect = (id) => {
         setSelectedAssignments((prevSelected) =>
@@ -148,6 +211,12 @@ function CardAssignment() {
                                     {assignment.tags && assignment.tags.map((tag, index) => (
                                         <span key={`${tag}-${index}`} className="text-overline py-2 px-3 h-full rounded-full bg-surface2 text-primary">{tag}</span>
                                     ))}
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <div className={`w-2 h-2 rounded-full ${getDeadlineClass2(assignment.deadline)}`}> </div>
+                                    <p className={`text-body2 ${getDeadlineClass(assignment.deadline)}`}>
+                                        {getDeadlineText(assignment.deadline)}
+                                    </p>
                                 </div>
                             </div>
                         </div>
