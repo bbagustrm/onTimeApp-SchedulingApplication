@@ -25,7 +25,7 @@ function getDeadlineText(deadline) {
     const nowStartOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
     const deadlineStartOfDay = new Date(deadlineDate.getFullYear(), deadlineDate.getMonth(), deadlineDate.getDate());
 
-    if (deadlineDate < now) {
+    if (deadlineDate < nowStartOfDay.getTime()) {
         return "Deadline terlewat";
     } else if (deadlineStartOfDay.getTime() === nowStartOfDay.getTime()) {
         return "Deadline Hari ini";
