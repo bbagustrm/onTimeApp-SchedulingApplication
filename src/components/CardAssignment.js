@@ -66,19 +66,6 @@ function CardAssignment() {
         }
     };
 
-    const getDeadlineClass = (deadline) => {
-        const now = new Date();
-        const deadlineDate = new Date(deadline);
-        const timeDifference = deadlineDate - now; // Selisih waktu dalam milidetik
-
-        if (timeDifference < 0) {
-            return "text-error"; // Sudah melewati deadline
-        } else if (timeDifference <= 24 * 60 * 60 * 1000) {
-            return "text-warning"; // Kurang dari 24 jam
-        } else {
-            return "text-onSurface"; // Normal
-        }
-    };
     const getDeadlineClass2 = (deadline) => {
         const now = new Date();
         const deadlineDate = new Date(deadline);
@@ -98,15 +85,16 @@ function CardAssignment() {
         const deadlineDate = new Date(deadline);
 
         // Atur waktu agar hanya membandingkan tanggal, bukan jam
-        const nowStartOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-        const deadlineStartOfDay = new Date(deadlineDate.getFullYear(), deadlineDate.getMonth(), deadlineDate.getDate());
-
-        if (deadlineDate < now) {
+        const nowStartOfDay = new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()));
+        const deadlineStartOfDay = new Date(Date.UTC(deadlineDate.getFullYear(), deadlineDate.getMonth(), deadlineDate.getDate()));
+        
+        
+        if (deadlineDate < nowStartOfDay.getTime()) {
             return "Deadline terlewat";
         } else if (deadlineStartOfDay.getTime() === nowStartOfDay.getTime()) {
             return "Deadline Hari ini";
         } else {
-            return deadlineDate.toLocaleDateString(); // Format default tanggal
+            return deadlineDate.toLocaleDateString();
         }
     };
 
@@ -213,8 +201,8 @@ function CardAssignment() {
                                     ))}
                                 </div>
                                 <div className="flex items-center gap-2">
-                                    <div className={`w-2 h-2 rounded-full ${getDeadlineClass2(assignment.deadline)}`}> </div>
-                                    <p className={`text-body2 ${getDeadlineClass(assignment.deadline)}`}>
+                                    <div className={`w-2 h-2 rounded-full ${getDeadlineText(assignment.deadline) === "Deadline terlewat" ? "bg-error" : getDeadlineText(assignment.deadline) === "Deadline Hari ini" ? "bg-warning" : "bg-onSurface"}`}> </div>
+                                    <p className={`text-body2 ${getDeadlineText(assignment.deadline) === "Deadline terlewat" ? "text-error" : getDeadlineText(assignment.deadline) === "Deadline Hari ini" ? "text-warning" : "text-onSurface"}`}>
                                         {getDeadlineText(assignment.deadline)}
                                     </p>
                                 </div>
