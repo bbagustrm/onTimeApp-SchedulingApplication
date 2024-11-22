@@ -5,7 +5,7 @@ import { ReactComponent as BackIcon } from '../../assets/ic-arrow-left.svg';
 
 function CreateTime() {
     const token = "?auth=kCScjmp3OSNBh2EstclolWV3jduOQ7EocsdbWqvL";
-    const user_id = "-OBZ3bUE2zRmeX90l-ws";
+    const user_id = localStorage.getItem('userKey');
     const navigate = useNavigate();
 
     const [newTime, setNewTime] = useState({

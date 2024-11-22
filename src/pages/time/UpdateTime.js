@@ -7,7 +7,7 @@ function UpdateTime() {
     const token = "?auth=kCScjmp3OSNBh2EstclolWV3jduOQ7EocsdbWqvL";
     const { id } = useParams();
     const navigate = useNavigate();
-    const user_id = "-OBZ3bUE2zRmeX90l-ws";
+    const user_id = localStorage.getItem('userKey');
 
     const [timeData, setTimeData] = useState({
         tugas_id: "",
