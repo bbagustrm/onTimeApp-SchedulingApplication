@@ -22,20 +22,6 @@ function Profile() {
                         <p className="text-gray-400 text-caption mb-1">Username</p>
                         <p className="text-subtitle2">{username}</p>
                     </div>
-                    <div className="w-full p-3 bg-surface rounded-md">
-                        <p className="text-gray-400 text-caption mb-1">Password</p>
-                        <div className='w-full flex justify-between'>
-                            <p className="text-subtitle2 w-full">
-                                {showPassword ? password : '••••••••'}
-                            </p>
-                            <span
-                                onClick={() => setShowPassword(!showPassword)}
-                                className="ml-2 text-primary cursor-pointer text-sm"
-                            >
-                                {showPassword ? 'hide' : 'show'}
-                            </span>
-                        </div>
-                    </div>
                 </div>
                 <button
                     onClick={handleLogout}

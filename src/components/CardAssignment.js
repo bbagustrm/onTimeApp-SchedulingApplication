@@ -93,8 +93,6 @@ function CardAssignment() {
             return "Deadline terlewat";
         } else if (deadlineStartOfDay.getTime() === nowStartOfDay.getTime()) {
             return "Deadline Hari ini";
-        } else {
-            return deadlineDate.toLocaleDateString();
         }
     };
 
@@ -201,7 +199,7 @@ function CardAssignment() {
                                     ))}
                                 </div>
                                 <div className="flex items-center gap-2">
-                                    <div className={`w-2 h-2 rounded-full ${getDeadlineText(assignment.deadline) === "Deadline terlewat" ? "bg-error" : getDeadlineText(assignment.deadline) === "Deadline Hari ini" ? "bg-warning" : "bg-onSurface"}`}> </div>
+                                    <div className={`w-2 h-2 rounded-full ${getDeadlineText(assignment.deadline) === "Deadline terlewat" ? "bg-error" : getDeadlineText(assignment.deadline) === "Deadline Hari ini" ? "bg-warning" : "hidden"}`}> </div>
                                     <p className={`text-body2 ${getDeadlineText(assignment.deadline) === "Deadline terlewat" ? "text-error" : getDeadlineText(assignment.deadline) === "Deadline Hari ini" ? "text-warning" : "text-onSurface"}`}>
                                         {getDeadlineText(assignment.deadline)}
                                     </p>
